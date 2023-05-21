@@ -1,26 +1,38 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <router-view :documents="documents" :id="selectedDocument" @view-details="viewDetails" @back="goBack" />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
+
+  data() {
+    return {
+      documents: [],
+      selectedDocument: null
+    };
+  },
+  mounted() {
+    fetch('https://staging-nymus.nymus.eu/api/recruitment/overview')
+      .then(response => response.json())
+      .then(data => {
+        this.documents = data.data.documents;
+      })
+      .catch(error => console.error('Error fetching documents:', error));
+  },
+  methods: {
+    viewDetails(document) {
+      this.selectedDocument = document;
+    },
+    goBack() {
+      this.selectedDocument = null;
+    }
   }
-}
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
